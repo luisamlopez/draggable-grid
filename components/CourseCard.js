@@ -31,8 +31,6 @@ const CourseCard = ({
 
             <div >
                 <>
-                    {position}
-                    {isDraggable ? " (Draggable)" : ""}
                     {before_price > 0 && (
                         <div >
                             <del>${before_price}</del>
