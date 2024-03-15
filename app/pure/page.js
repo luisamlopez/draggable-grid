@@ -39,6 +39,8 @@ const Index = () => {
         console.log("Nuevas posiciones guardadas:", cards);
         setEditMode(false); // Salimos del modo de edición después de guardar
     };
+
+
     useEffect(() => {
 
         setCards(

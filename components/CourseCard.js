@@ -25,7 +25,9 @@ const CourseCard = ({
     return (
         <div className={className} onDrop={onDrop} onDragOver={onDragOver} onDragEnd={onDragEnd} onDragStart={onDragStart} draggable={isDraggable} style={{
             cursor: `${isDraggable ? "grab" : "pointer"}`, border: `2px solid ${className === "card dragging" ? "red" : "black"}`, boxShadow: `${className === "card dragging" ? "0 0 10px 0 red" : "none"}`, padding: "10px",
-        }}>
+            backgroundColor: `${className !== "card dragging" ? "rgba(255, 0, 0, 0.1)" : "white"}`
+        }}
+        >
 
             <div >
                 <>
