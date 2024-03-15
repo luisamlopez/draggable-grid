@@ -11,29 +11,38 @@ const CourseCard = ({
     lessons,
     user,
     enrolmentsCount,
+    position,
+    className,
+    onDragStart,
+    onDragEnd,
+    onDragOver,
+    onDrop,
+    isDraggable,
+
 }) => {
 
 
     return (
-        <div className="col-lg-4 col-md-6">
-            <div className="single-courses-box">
+        <div className={className} onDrop={onDrop} onDragOver={onDragOver} onDragEnd={onDragEnd} onDragStart={onDragStart} draggable={isDraggable} style={{
+            cursor: `${isDraggable ? "grab" : "pointer"}`, border: `2px solid ${className === "card dragging" ? "red" : "black"}`, boxShadow: `${className === "card dragging" ? "0 0 10px 0 red" : "none"}`, padding: "10px",
+        }}>
 
-
-
-
+            <div >
                 <>
+                    {position}
+                    {isDraggable ? " (Draggable)" : ""}
                     {before_price > 0 && (
-                        <div className="price shadow discount-price">
+                        <div >
                             <del>${before_price}</del>
                         </div>
                     )}
-                    <div className="price shadow">
+                    <div >
                         {latest_price > 0 ? `$${latest_price}` : "Gratis"}
                     </div>
                 </>
 
-                <div className="courses-content">
-                    <div className="course-author d-flex align-items-center">
+                <div >
+                    <div >
 
                         <span>{`${user.first_name} ${user.last_name}`}</span>
                     </div>
@@ -46,19 +55,20 @@ const CourseCard = ({
                         </Link>
                     </h3>
 
-                    <p className="course-description">{short_desc.slice(0, 108)}</p>
-                    <ul className="courses-box-footer d-flex justify-content-between align-items-center">
+                    <p >{short_desc.slice(0, 108)}</p>
+                    <ul >
                         <li>
-                            <i className="flaticon-agenda"></i> {lessons} Lecciones
+                            <i ></i> {lessons} Lecciones
                         </li>
                         <li>
-                            <i className="flaticon-people"></i> {enrolmentsCount}{" "}
+                            <i ></i> {enrolmentsCount}{" "}
                             Estudiantes
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
+
     );
 };
 

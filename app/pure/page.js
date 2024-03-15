@@ -3,9 +3,42 @@ import CourseCard from "@/components/CourseCard";
 import { useEffect, useState } from "react";
 
 const Index = () => {
-    const [cards, setCards] = useState([])
+    const [cards, setCards] = useState([]);
+    const [draggingItem, setDraggingItem] = useState(null);
+    const [editMode, setEditMode] = useState(false); // Nuevo estado para el modo de edición
 
+    const handleDragStart = (e, card) => {
+        setDraggingItem(card);
+        e.dataTransfer.setData('text/plain', '');
+    };
 
+    const handleDragEnd = () => {
+        setDraggingItem(null);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e, targetItem) => {
+        if (!draggingItem) return;
+
+        const currentIndex = cards.indexOf(draggingItem);
+        const targetIndex = cards.indexOf(targetItem);
+
+        if (currentIndex !== -1 && targetIndex !== -1) {
+            const newItems = [...cards];
+            newItems.splice(currentIndex, 1);
+            newItems.splice(targetIndex, 0, draggingItem);
+            setCards(newItems);
+        }
+    };
+
+    const saveNewPositions = () => {
+        // Aquí puedes enviar las nuevas posiciones al servidor para guardarlas en la base de datos
+        console.log("Nuevas posiciones guardadas:", cards);
+        setEditMode(false); // Salimos del modo de edición después de guardar
+    };
     useEffect(() => {
 
         setCards(
@@ -24,6 +57,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 1
             },
 
             {
@@ -40,6 +74,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 2
             },
 
             {
@@ -56,6 +91,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 3
             },
 
             {
@@ -72,6 +108,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 4
             },
 
             {
@@ -88,6 +125,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 5
             },
 
             {
@@ -104,6 +142,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 6
             },
 
             {
@@ -120,6 +159,7 @@ const Index = () => {
                     last_name: "Perez",
                     profile_photo: "juan.jpg"
                 },
+                position: 7
             },
             ]
 
@@ -132,15 +172,31 @@ const Index = () => {
     return (
         <div>
             <h1>Pure</h1>
+            {!editMode && <button onClick={() => setEditMode(!editMode)}>
+                Editar Posiciones
+            </button>}
             {/* Grid of cards */}
+            <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gridGap: 20,
+                padding: 20
+            }}>
+                {cards.map((card, i) => (
+                    <CourseCard key={i} {...card}
+                        className={`card ${card === draggingItem ? 'dragging' : ''}`} onDragStart={(e) => handleDragStart(e, card)}
+                        onDragEnd={handleDragEnd}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, card)}
+                        isDraggable={editMode}
+                    />
 
-
-
-            <div className="row justify-content-center">
-                {cards.map((card) => (
-                    <CourseCard key={card.id} {...card} />
                 ))}
             </div>
+
+            {editMode && (
+                <button onClick={saveNewPositions}>Guardar Posiciones</button>
+            )}
 
         </div>
     );
