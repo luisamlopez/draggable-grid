@@ -1,13 +1,13 @@
 "use client";
+import React, { useEffect, useState } from "react";
 import CourseCard from "@/components/CourseCard";
-import { useEffect, useState } from "react";
-
 
 
 export default function Home() {
   const [cards, setCards] = useState([]);
+  const [originalCards, setOriginalCards] = useState([]); // Almacena las tarjetas originales obtenidas de la base de datos
   const [draggingItem, setDraggingItem] = useState(null);
-  const [editMode, setEditMode] = useState(false); // Nuevo estado para el modo de edición
+  const [editMode, setEditMode] = useState(false);
 
   const handleDragStart = (e, card) => {
     setDraggingItem(card);
@@ -25,28 +25,39 @@ export default function Home() {
   const handleDrop = (e, targetItem) => {
     if (!draggingItem) return;
 
-    const currentIndex = cards.indexOf(draggingItem);
-    const targetIndex = cards.indexOf(targetItem);
+    const currentIndex = cards.findIndex(item => item.id === draggingItem.id);
+    const targetIndex = cards.findIndex(item => item.id === targetItem.id);
 
     if (currentIndex !== -1 && targetIndex !== -1) {
       const newItems = [...cards];
-      newItems.splice(currentIndex, 1);
-      newItems.splice(targetIndex, 0, draggingItem);
-      setCards(newItems);
+      const [draggedItem] = newItems.splice(currentIndex, 1);
+      newItems.splice(targetIndex, 0, draggedItem);
+
+      // Actualizar las posiciones
+      const updatedItems = newItems.map((item, index) => ({
+        ...item,
+        position: index + 1
+      }));
+
+      setCards(updatedItems);
     }
   };
 
   const saveNewPositions = () => {
-    // Aquí puedes enviar las nuevas posiciones al servidor para guardarlas en la base de datos
-    console.log("Nuevas posiciones guardadas:", cards);
-    setEditMode(false); // Salimos del modo de edición después de guardar
+    // Filtrar las tarjetas que han cambiado de posición
+    const changedCards = cards.filter(card => {
+      const originalCard = originalCards.find(item => item.id === card.id);
+      return originalCard.position !== card.position;
+    });
+
+    console.log("Tarjetas con posiciones cambiadas:", changedCards);
+    // Aquí puedes enviar las tarjetas cambiadas al servidor para guardarlas en la base de datos
+
+    setEditMode(false);
   };
-
-
   useEffect(() => {
 
-    setCards(
-
+    const dataFromDatabase = (
       [{
         id: 1,
         title: "Curso de React",
@@ -169,6 +180,8 @@ export default function Home() {
 
     )
 
+    setCards(dataFromDatabase);
+    setOriginalCards(dataFromDatabase);
 
   }, [])
 
@@ -176,10 +189,7 @@ export default function Home() {
   return (
     <div>
       <h1>Pure</h1>
-      {!editMode && <button onClick={() => setEditMode(!editMode)}>
-        Editar Posiciones
-      </button>}
-      {/* Grid of cards */}
+      {!editMode && <button onClick={() => setEditMode(!editMode)}>Editar Posiciones</button>}
       <div style={{
         display: "grid",
         gridTemplateColumns: "repeat(3, 1fr)",
@@ -188,20 +198,18 @@ export default function Home() {
       }}>
         {cards.map((card, i) => (
           <CourseCard key={i} {...card}
-            className={`card ${card === draggingItem ? 'dragging' : ''}`} onDragStart={(e) => handleDragStart(e, card)}
+            className={`card ${card === draggingItem ? 'dragging' : ''}`}
+            onDragStart={(e) => handleDragStart(e, card)}
             onDragEnd={handleDragEnd}
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, card)}
             isDraggable={editMode}
           />
-
         ))}
       </div>
-
       {editMode && (
         <button onClick={saveNewPositions}>Guardar Posiciones</button>
       )}
-
     </div>
   );
 }
