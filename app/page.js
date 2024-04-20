@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import CourseCard from "@/components/CourseCard";
+import Link from "next/link";
 
+import { DndContext } from '@dnd-kit/core';
 
 export default function Home() {
   const [cards, setCards] = useState([]);
@@ -189,6 +191,9 @@ export default function Home() {
   return (
     <div>
       <h1>Pure</h1>
+      <Link href="/draggable">
+        Ir a la versión con drag and drop
+      </Link>
       {!editMode && <button onClick={() => setEditMode(!editMode)}>Editar Posiciones</button>}
       <div style={{
         display: "grid",

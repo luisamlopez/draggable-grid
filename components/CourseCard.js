@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+import React, { forwardRef, useEffect, useState } from "react";
 
-const CourseCard = ({
-    id,
-    title,
+const CourseCard = forwardRef(({ title,
     slug,
     short_desc,
     latest_price,
@@ -18,17 +15,24 @@ const CourseCard = ({
     onDragOver,
     onDrop,
     isDraggable,
-
-}) => {
+    dnd,
+    withOpacity, isDragging,
+    ...props
+}, ref) => {
 
 
     return (
-        <div className={className} onDrop={onDrop} onDragOver={onDragOver} onDragEnd={onDragEnd} onDragStart={onDragStart} draggable={isDraggable} style={{
-            cursor: `${isDraggable ? "grab" : "pointer"}`, border: `2px solid ${className === "card dragging" ? "red" : "black"}`, boxShadow: `${className === "card dragging" ? "0 0 10px 0 red" : "none"}`, padding: "10px",
-            backgroundColor: `${className !== "card dragging" ? "rgba(255, 0, 0, 0.1)" : "white"}`
-        }}
+        <div ref={ref} {...props} className={className} draggable={isDraggable}
+            style={{
+                cursor: isDraggable ? 'grab' : 'pointer',
+                border: `2px solid ${className === "card dragging" ? "red" : "black"}`, boxShadow: `${className === "card dragging" ? "0 0 10px 0 red" : "none"}`, padding: "10px",
+                backgroundColor: `${className !== "card dragging" ? "rgba(255, 0, 0, 0.1)" : "white"}`,
+                transition: "transform 0.3s ease",
+                transformOrigin: '50% 50%',
+                transform: isDragging ? 'scale(1.05)' : 'scale(1)',
+                opacity: withOpacity ? '0.5' : '1',
+            }}
         >
-
             <div >
                 <>
                     {position}
@@ -44,20 +48,19 @@ const CourseCard = ({
                 </>
 
                 <div >
-                    <div >
+                    {/* <div >
 
                         <span>{`${user.first_name} ${user.last_name}`}</span>
-                    </div>
+                    </div> */}
 
                     <h3>
-                        <Link href={`/course/${slug}`}>
 
-                            {title.slice(0, 40)}...
+                        {title}...
 
-                        </Link>
+
                     </h3>
 
-                    <p >{short_desc.slice(0, 108)}</p>
+                    <p >{short_desc}</p>
                     <ul >
                         <li>
                             <i ></i> {lessons} Lecciones
@@ -72,6 +75,6 @@ const CourseCard = ({
         </div>
 
     );
-};
+});
 
 export default CourseCard;
