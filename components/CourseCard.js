@@ -36,7 +36,7 @@ const CourseCard = forwardRef(({ title,
             <div >
                 <>
                     {position}
-                    {isDraggable ? " (Draggable)" : ""}
+                    {isDraggable ? " (Draggable)" : " Not draggable"}
                     {before_price > 0 && (
                         <div >
                             <del>${before_price}</del>
