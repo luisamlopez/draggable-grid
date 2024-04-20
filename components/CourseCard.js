@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef } from "react";
 
 const CourseCard = forwardRef(({ title,
     slug,
@@ -76,5 +76,7 @@ const CourseCard = forwardRef(({ title,
 
     );
 });
+
+CourseCard.displayName = 'CourseCard';
 
 export default CourseCard;

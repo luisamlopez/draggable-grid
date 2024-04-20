@@ -1,7 +1,6 @@
-import React, { FC } from "react";
+import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import Item, { ItemProps } from "./Item";
 import CourseCard from "./CourseCard";
 
 const SortableItem = ({ card, isDraggable }) => {

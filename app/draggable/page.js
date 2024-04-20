@@ -20,7 +20,6 @@ import CourseCard from '@/components/CourseCard';
 import Link from 'next/link';
 
 function Page() {
-    const [items, setItems] = useState(Array.from({ length: 20 }, (_, i) => (i + 1).toString()));
     const [activeId, setActiveId] = useState(null);
     const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
     const [cards, setCards] = useState([]);
@@ -38,13 +37,15 @@ function Page() {
             });
 
             changedCards.forEach(changedCard => {
+                const originalPosition = originalCards.find(card => card.id === changedCard.id).position;
                 const currentPosition = cards.find(card => card.id === changedCard.id).position;
-                console.log(`El curso "${changedCard.title}" cambió de posición de ${changedCard.position} a ${currentPosition}`);
+                console.log(`El curso "${changedCard.title}" cambió de posición de ${originalPosition} a ${currentPosition}`);
             });
 
             setEditMode(false);
         }
     };
+
 
 
     useEffect(() => {
@@ -186,21 +187,22 @@ function Page() {
 
         if (active.id !== over?.id) {
             const draggedCard = cards.find(card => card.id === active.id);
-            const overCard = cards.find(card => card.id === over.id);
-            const draggedIndex = cards.indexOf(draggedCard);
-            const overIndex = cards.indexOf(overCard);
+            const draggedIndex = cards.findIndex(card => card.id === active.id);
+            const overIndex = cards.findIndex(card => card.id === over.id);
 
-            const newCards = [...cards];
-            newCards.splice(draggedIndex, 1);
-            newCards.splice(overIndex, 0, draggedCard);
-
-            setCards(newCards);
+            setCards(prevCards => {
+                const newCards = [...prevCards];
+                newCards.splice(draggedIndex, 1);
+                newCards.splice(overIndex, 0, draggedCard);
+                return newCards.map((card, index) => ({
+                    ...card,
+                    position: index + 1
+                }));
+            });
         }
 
         setActiveId(null);
     }, [cards]);
-
-
 
     const handleDragCancel = useCallback(() => {
         setActiveId(null);
@@ -221,15 +223,19 @@ function Page() {
                 onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 onDragCancel={handleDragCancel}
-
             >
                 <SortableContext items={cards} strategy={rectSortingStrategy} disabled={!editMode}>
-                    <Grid columns={5}>
-                        {cards.map((card, id) => (
+                    <div style={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(3, 1fr)",
+                        gridGap: 20,
+                        padding: 20
+                    }}>
+                        {cards.map((card) => (
                             <SortableItem
                                 key={card.position} id={card.position} card={card} isDraggable={editMode} />
                         ))}
-                    </Grid>
+                    </div>
                 </SortableContext>
                 <DragOverlay adjustScale style={{ transformOrigin: '0 0 ' }}>
                     {activeId ? <CourseCard id={activeId} isDragging /> : null}
